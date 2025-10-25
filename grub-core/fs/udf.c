@@ -119,6 +119,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
   ((char *) (_ptr) >= end_ptr || \
    ((grub_ssize_t) (end_ptr - (char *) (_ptr)) < (grub_ssize_t) sizeof (_struct)))
 
+PRAGMA_BEGIN_PACKED
 struct grub_udf_lb_addr
 {
   grub_uint32_t block_num;
@@ -376,6 +377,7 @@ struct grub_udf_aed
   grub_uint32_t prev_ae;
   grub_uint32_t ae_len;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_udf_data
 {

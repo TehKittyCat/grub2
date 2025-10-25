@@ -29,6 +29,7 @@ struct grub_unicode_bidi_pair
   grub_uint32_t replace;
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_unicode_compact_range
 {
   unsigned start:21;
@@ -38,6 +39,7 @@ struct grub_unicode_compact_range
   unsigned bidi_mirror:1;
   unsigned join_type:3;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* Old-style Arabic shaping. Used for "visual UTF-8" and
    in grub-mkfont to find variant glyphs in absence of GPOS tables.  */

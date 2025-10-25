@@ -76,6 +76,7 @@ enum
   {
     FLAG_CONTIGUOUS = 2
   };
+PRAGMA_BEGIN_PACKED
 struct grub_fat_dir_entry
 {
   grub_uint8_t entry_type;
@@ -116,6 +117,7 @@ struct grub_fat_dir_entry
     }  GRUB_PACKED  volume_label;
   }  GRUB_PACKED type_specific;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_fat_dir_node
 {
@@ -130,6 +132,7 @@ struct grub_fat_dir_node
 typedef struct grub_fat_dir_node grub_fat_dir_node_t;
 
 #else
+PRAGMA_BEGIN_PACKED
 struct grub_fat_dir_entry
 {
   grub_uint8_t name[11];
@@ -157,6 +160,7 @@ struct grub_fat_long_name_entry
   grub_uint16_t first_cluster;
   grub_uint16_t name3[2];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 typedef struct grub_fat_dir_entry grub_fat_dir_node_t;
 
@@ -728,7 +732,7 @@ grub_fat_iterate_dir_next (grub_fshelp_node_t node,
       grub_dprintf ("exfat", "unknown primary type 0x%02x\n",
 		    dir->entry_type);
     }
-  return grub_errno ? : GRUB_ERR_EOF;
+  return grub_errno ? grub_errno : GRUB_ERR_EOF;
 }
 
 /*
@@ -882,7 +886,7 @@ grub_fat_iterate_dir_next (grub_fshelp_node_t node,
       return GRUB_ERR_NONE;
     }
 
-  return grub_errno ? : GRUB_ERR_EOF;
+  return grub_errno ? grub_errno : GRUB_ERR_EOF;
 }
 
 /*

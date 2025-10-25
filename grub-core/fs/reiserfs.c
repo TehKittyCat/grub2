@@ -43,15 +43,27 @@
 
 GRUB_MOD_LICENSE ("GPLv3+");
 
+#ifndef _MSC_VER
+#ifndef MIN
 #define MIN(a, b) \
   ({ typeof (a) _a = (a); \
      typeof (b) _b = (b); \
      _a < _b ? _a : _b; })
-
+#endif
+#ifndef MAX
 #define MAX(a, b) \
   ({ typeof (a) _a = (a); \
      typeof (b) _b = (b); \
      _a > _b ? _a : _b; })
+#endif
+#else
+#ifndef MIN
+#define MIN(a, b) ((a)<(b)?(a):(b))
+#endif
+#ifndef MAX
+#define MAX(a, b) ((a)>(b)?(a):(b))
+#endif
+#endif
 
 #define REISERFS_SUPER_BLOCK_OFFSET 0x10000
 #define REISERFS_MAGIC_LEN 12
@@ -83,6 +95,7 @@ enum grub_reiserfs_item_type
     GRUB_REISERFS_UNKNOWN
   };
 
+PRAGMA_BEGIN_PACKED
 struct grub_reiserfs_superblock
 {
   grub_uint32_t block_count;
@@ -218,6 +231,7 @@ struct grub_reiserfs_directory_header
   grub_uint16_t location;
   grub_uint16_t state;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_fshelp_node
 {

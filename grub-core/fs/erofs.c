@@ -37,6 +37,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 #define EROFS_FEATURE_INCOMPAT_CHUNKED_FILE	0x00000004
 #define EROFS_ALL_FEATURE_INCOMPAT		EROFS_FEATURE_INCOMPAT_CHUNKED_FILE
 
+PRAGMA_BEGIN_PACKED
 struct grub_erofs_super
 {
   grub_uint32_t		magic;
@@ -71,6 +72,7 @@ struct grub_erofs_super
   grub_uint64_t		packed_nid;
   grub_uint8_t		reserved2[24];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 #define EROFS_INODE_LAYOUT_COMPACT	0
 #define EROFS_INODE_LAYOUT_EXTENDED	1
@@ -87,11 +89,13 @@ struct grub_erofs_super
 #define EROFS_I_VERSION_BIT	0
 #define EROFS_I_DATALAYOUT_BIT	1
 
+PRAGMA_BEGIN_PACKED
 struct grub_erofs_inode_chunk_info
 {
   grub_uint16_t		format;
   grub_uint16_t		reserved;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 #define EROFS_CHUNK_FORMAT_BLKBITS_MASK	0x001F
 #define EROFS_CHUNK_FORMAT_INDEXES	0x0020
@@ -122,6 +126,7 @@ union grub_erofs_inode_i_u
   struct grub_erofs_inode_chunk_info	c;
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_erofs_inode_compact
 {
   grub_uint16_t			i_format;
@@ -183,6 +188,7 @@ struct grub_erofs_dirent
   grub_uint8_t		file_type;
   grub_uint8_t		reserved;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_erofs_map_blocks
 {

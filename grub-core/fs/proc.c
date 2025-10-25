@@ -90,7 +90,7 @@ grub_procfs_rewind (struct grub_archelp_data *data)
 static grub_err_t
 grub_procfs_find_file (struct grub_archelp_data *data, char **name,
 		     grub_int32_t *mtime,
-		     grub_uint32_t *mode)
+		     grub_archelp_mode_t *mode)
 {
   data->entry = data->next_entry;
   if (!data->entry)

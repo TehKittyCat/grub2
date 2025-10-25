@@ -133,6 +133,7 @@ struct grub_nilfs2_super_block
   grub_uint32_t s_reserved[192];
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_nilfs2_dir_entry
 {
   grub_uint64_t inode;
@@ -145,6 +146,7 @@ struct grub_nilfs2_dir_entry
   char pad;
 #endif
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 enum
 {
@@ -754,7 +756,7 @@ static grub_err_t
 grub_nilfs2_load_sb (struct grub_nilfs2_data *data)
 {
   grub_disk_t disk = data->disk;
-  struct grub_nilfs2_super_block sb2;
+  struct grub_nilfs2_super_block sb2 = { 0 };
   grub_uint64_t partition_size;
   int valid[2];
   int swp = 0;

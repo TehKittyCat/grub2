@@ -86,11 +86,13 @@ typedef union zap_leaf_chunk {
 	} l_entry;
 	struct zap_leaf_array {
 		grub_uint8_t la_type;		/* always ZAP_CHUNK_ARRAY */
+		PRAGMA_BEGIN_PACKED
 		union
 		{
 			grub_uint8_t la_array[ZAP_LEAF_ARRAY_BYTES];
 			grub_uint64_t la_array64;
 		} GRUB_PACKED;
+		PRAGMA_END_PACKED
 		grub_uint16_t la_next;		/* next blk or CHAIN_END */
 	} l_array;
 	struct zap_leaf_free {

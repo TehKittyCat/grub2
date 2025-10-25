@@ -70,6 +70,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 #define DOUBLE_INDIRECT_SHIFT 2
 
 #define LOG_EXTENT_SIZE 3
+PRAGMA_BEGIN_PACKED
 struct grub_bfs_extent
 {
   grub_uint32_t ag;
@@ -168,6 +169,7 @@ struct grub_bfs_btree_node
   grub_uint16_t total_key_len;
 #endif
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_bfs_data
 {

@@ -59,6 +59,7 @@ enum grub_hfs_cnid_type
   };
 
 /* A node descriptor.  This is the header of every node.  */
+PRAGMA_BEGIN_PACKED
 struct grub_hfs_node
 {
   grub_uint32_t next;
@@ -84,6 +85,7 @@ struct grub_hfs_treeheader
   grub_uint32_t free_nodes;
   grub_uint8_t unused[76];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* The state of a mounted HFS filesystem.  */
 struct grub_hfs_data
@@ -104,6 +106,7 @@ struct grub_hfs_data
 
 /* The key as used on disk in a catalog tree.  This is used to lookup
    file/directory nodes by parent directory ID and filename.  */
+PRAGMA_BEGIN_PACKED
 struct grub_hfs_catalog_key
 {
   grub_uint8_t unused;
@@ -157,6 +160,7 @@ struct grub_hfs_filerec
      in the extent overflow file.  */
   grub_hfs_datarecord_t extents;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* A record descriptor, both key and data, used to pass to call back
    functions.  */
@@ -721,11 +725,13 @@ grub_hfs_iterate_records (struct grub_hfs_data *data, int type, int idx,
       for (i = 0; i < reccnt; i++)
 	{
 	  int pos = (nodesize >> 1) - 1 - i;
+	  PRAGMA_BEGIN_PACKED
  	  struct pointer
 	  {
 	    grub_uint8_t keylen;
 	    grub_uint8_t key;
 	  } GRUB_PACKED *pnt;
+	  PRAGMA_END_PACKED
 	  grub_uint16_t off = grub_be_to_cpu16 (node->offsets[pos]);
 	  if (off > nodesize - sizeof(*pnt))
 	    continue;

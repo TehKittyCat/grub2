@@ -69,6 +69,7 @@ struct grub_jfs_sblock
   char volname2[16];
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_jfs_extent
 {
   /* The length of the extent in filesystem blocks.  */
@@ -260,10 +261,11 @@ struct grub_jfs_diropen
   char name[256 * GRUB_MAX_UTF8_PER_UTF16 + 1];
   grub_uint32_t ino;
 } GRUB_PACKED;
-
+PRAGMA_END_PACKED
 
 static grub_dl_t my_mod;
-
+
+
 static grub_err_t grub_jfs_lookup_symlink (struct grub_jfs_data *data, grub_uint32_t ino);
 
 /*

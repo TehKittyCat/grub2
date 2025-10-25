@@ -28,6 +28,7 @@
 GRUB_MOD_LICENSE ("GPLv3+");
 
 /* big-endian.  */
+PRAGMA_BEGIN_PACKED
 struct grub_hfsplus_compress_header1
 {
   grub_uint32_t header_size;
@@ -48,6 +49,7 @@ struct grub_hfsplus_compress_header3
 {
   grub_uint32_t num_chunks;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* little-endian.  */
 struct grub_hfsplus_compress_block_descriptor
@@ -56,6 +58,7 @@ struct grub_hfsplus_compress_block_descriptor
   grub_uint32_t size;
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_hfsplus_compress_end_descriptor
 {
   grub_uint8_t always_the_same[50];
@@ -76,6 +79,7 @@ struct grub_hfsplus_compress_attr
   grub_uint32_t uncompressed_inline_size;
   grub_uint32_t always_0;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 enum
   {

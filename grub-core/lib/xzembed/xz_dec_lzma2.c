@@ -24,7 +24,9 @@
 #include "xz_private.h"
 #include "xz_lzma2.h"
 
+#ifdef __GNUC__
 #pragma GCC diagnostic warning "-Wattributes"
+#endif
 
 /*
  * Range decoder initialization eats the first five bytes of each LZMA chunk.

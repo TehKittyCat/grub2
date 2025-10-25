@@ -32,7 +32,9 @@
 #define ALIGN_UP_OVERHEAD(addr, align) ((-(addr)) & ((typeof (addr)) (align) - 1))
 #define ALIGN_DOWN(addr, align) \
 	((addr) & ~((typeof (addr)) (align) - 1))
+#ifndef ARRAY_SIZE
 #define ARRAY_SIZE(array) (sizeof (array) / sizeof (array[0]))
+#endif
 #define COMPILE_TIME_ASSERT(cond) switch (0) { case 1: case !(cond): ; }
 
 #define grub_dprintf(condition, ...) grub_real_dprintf(GRUB_FILE, __LINE__, condition, __VA_ARGS__)
@@ -331,6 +333,9 @@ grub_uuidcasecmp (const char *uuid1, const char *uuid2, grub_size_t n)
  *  ... or ...
  *  l = grub_strtoul(s, (const char ** const)&end, 10);
  */
+#ifdef _MSC_VER
+#define restrict
+#endif
 unsigned long EXPORT_FUNC(grub_strtoul) (const char * restrict str, const char ** const restrict end, int base);
 unsigned long long EXPORT_FUNC(grub_strtoull) (const char * restrict str, const char ** const restrict end, int base);
 

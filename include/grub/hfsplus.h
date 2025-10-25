@@ -24,6 +24,7 @@
 #define GRUB_HFSPLUS_SBLOCK 2
 
 /* A HFS+ extent.  */
+PRAGMA_BEGIN_PACKED
 struct grub_hfsplus_extent
 {
   /* The first block of a file on disk.  */
@@ -68,6 +69,7 @@ struct grub_hfsplus_volheader
   struct grub_hfsplus_forkdata attr_file;
   struct grub_hfsplus_forkdata startup_file;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_hfsplus_compress_index
 {
@@ -140,6 +142,7 @@ struct grub_hfsplus_extkey_internal
   grub_uint8_t type;
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_hfsplus_attrkey
 {
   grub_uint16_t keylen;
@@ -149,6 +152,7 @@ struct grub_hfsplus_attrkey
   grub_uint16_t namelen;
   grub_uint16_t name[0];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_hfsplus_attrkey_internal
 {
@@ -168,6 +172,7 @@ struct grub_hfsplus_key_internal
 };
 
 /* The on disk layout of a catalog key.  */
+PRAGMA_BEGIN_PACKED
 struct grub_hfsplus_catkey
 {
   grub_uint16_t keylen;
@@ -206,6 +211,7 @@ struct grub_hfsplus_btnode
   grub_uint16_t count;
   grub_uint16_t unused;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* Return the offset of the record with the index INDEX, in the node
    NODE which is part of the B+ tree BTREE.  */

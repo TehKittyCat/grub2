@@ -27,8 +27,18 @@
 
 #ifdef __MINGW32__
 #define GRUB_PACKED __attribute__ ((packed,gcc_struct))
+#elif defined(_MSC_VER)
+#define GRUB_PACKED
 #else
 #define GRUB_PACKED __attribute__ ((packed))
+#endif
+
+#ifdef _MSC_VER
+#define PRAGMA_BEGIN_PACKED __pragma(pack(push, 1))
+#define PRAGMA_END_PACKED   __pragma(pack(pop))
+#else
+#define PRAGMA_BEGIN_PACKED
+#define PRAGMA_END_PACKED
 #endif
 
 #ifdef GRUB_BUILD
@@ -199,19 +209,17 @@ static inline grub_uint16_t grub_swap_bytes16(grub_uint16_t _x)
 #define grub_swap_bytes16_compile_time(x) ((grub_uint16_t)((((x) & 0xff) << 8) | (((x) & 0xff00) >> 8)))
 #define grub_swap_bytes32_compile_time(x) ((grub_uint32_t)((((x) & 0xff) << 24) | (((x) & 0xff00) << 8) | (((x) & 0xff0000) >> 8) | (((x) & 0xff000000UL) >> 24)))
 #define grub_swap_bytes64_compile_time(x)	\
-({ \
-   grub_uint64_t _x = (x); \
-   (grub_uint64_t) ((_x << 56) \
-                    | ((_x & (grub_uint64_t) 0xFF00ULL) << 40) \
-                    | ((_x & (grub_uint64_t) 0xFF0000ULL) << 24) \
-                    | ((_x & (grub_uint64_t) 0xFF000000ULL) << 8) \
-                    | ((_x & (grub_uint64_t) 0xFF00000000ULL) >> 8) \
-                    | ((_x & (grub_uint64_t) 0xFF0000000000ULL) >> 24) \
-                    | ((_x & (grub_uint64_t) 0xFF000000000000ULL) >> 40) \
-                    | (_x >> 56)); \
-})
+((grub_uint64_t) ((((grub_uint64_t)x) << 56) \
+                    | ((((grub_uint64_t)x) & (grub_uint64_t) 0xFF00ULL) << 40) \
+                    | ((((grub_uint64_t)x) & (grub_uint64_t) 0xFF0000ULL) << 24) \
+                    | ((((grub_uint64_t)x) & (grub_uint64_t) 0xFF000000ULL) << 8) \
+                    | ((((grub_uint64_t)x) & (grub_uint64_t) 0xFF00000000ULL) >> 8) \
+                    | ((((grub_uint64_t)x) & (grub_uint64_t) 0xFF0000000000ULL) >> 24) \
+                    | ((((grub_uint64_t)x) & (grub_uint64_t) 0xFF000000000000ULL) >> 40) \
+                    | (((grub_uint64_t)x) >> 56)) \
+)
 
-#if (defined(__GNUC__) && (__GNUC__ > 3) && (__GNUC__ > 4 || __GNUC_MINOR__ >= 3)) || defined(__clang__)
+#if ((defined(__GNUC__) && (__GNUC__ > 3) && (__GNUC__ > 4 || __GNUC_MINOR__ >= 3)) || defined(__clang__)) && (!defined (__riscv))
 static inline grub_uint32_t grub_swap_bytes32(grub_uint32_t x)
 {
 	return __builtin_bswap32(x);
@@ -286,18 +294,24 @@ static inline grub_uint64_t grub_swap_bytes64(grub_uint64_t _x)
 
 #endif /* ! WORDS_BIGENDIAN */
 
+PRAGMA_BEGIN_PACKED
 struct grub_unaligned_uint16
 {
   grub_uint16_t val;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
+PRAGMA_BEGIN_PACKED
 struct grub_unaligned_uint32
 {
   grub_uint32_t val;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
+PRAGMA_BEGIN_PACKED
 struct grub_unaligned_uint64
 {
   grub_uint64_t val;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 typedef struct grub_unaligned_uint16 grub_unaligned_uint16_t;
 typedef struct grub_unaligned_uint32 grub_unaligned_uint32_t;
@@ -338,10 +352,12 @@ static inline grub_uint64_t grub_get_unaligned64 (const void *ptr)
 
 static inline void grub_set_unaligned64 (void *ptr, grub_uint64_t val)
 {
+  PRAGMA_BEGIN_PACKED
   struct grub_unaligned_uint64_t
   {
     grub_uint64_t d;
   } GRUB_PACKED;
+  PRAGMA_END_PACKED
   struct grub_unaligned_uint64_t *dd = (struct grub_unaligned_uint64_t *) ptr;
   dd->d = val;
 }

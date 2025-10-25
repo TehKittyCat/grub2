@@ -985,6 +985,7 @@ list_file (struct grub_ntfs_file *diro, grub_uint8_t *pos, grub_uint8_t *end_pos
   return 0;
 }
 
+PRAGMA_BEGIN_PACKED
 struct symlink_descriptor
 {
   grub_uint32_t type;
@@ -994,6 +995,7 @@ struct symlink_descriptor
   grub_uint16_t off2;
   grub_uint16_t len2;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 static char *
 grub_ntfs_read_symlink (grub_fshelp_node_t node)

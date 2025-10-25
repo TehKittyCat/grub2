@@ -55,7 +55,6 @@
 /*-*******************************************************
 *  Dependencies
 *********************************************************/
-#include <string.h>      /* memcpy, memmove, memset */
 #include "compiler.h"    /* prefetch */
 #include "cpu.h"         /* bmi2 */
 #include "mem.h"         /* low level memory routines */

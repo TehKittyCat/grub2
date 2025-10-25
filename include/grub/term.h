@@ -339,12 +339,12 @@ void grub_term_restore_pos (struct grub_term_coordinate *pos);
 
 static inline unsigned grub_term_width (struct grub_term_output *term)
 {
-  return term->getwh(term).x ? : 80;
+  return term->getwh(term).x ? term->getwh(term).x : 80;
 }
 
 static inline unsigned grub_term_height (struct grub_term_output *term)
 {
-  return term->getwh(term).y ? : 24;
+  return term->getwh(term).y ? term->getwh(term).y : 24;
 }
 
 static inline struct grub_term_coordinate

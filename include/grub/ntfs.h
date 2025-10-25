@@ -125,6 +125,7 @@ enum
     GRUB_NTFS_RF_BLNK		= 1
   };
 
+PRAGMA_BEGIN_PACKED
 struct grub_ntfs_bpb
 {
   grub_uint8_t jmp_boot[3];
@@ -150,6 +151,7 @@ struct grub_ntfs_bpb
   grub_uint64_t num_serial;
   grub_uint32_t checksum;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_ntfs_attr
 {

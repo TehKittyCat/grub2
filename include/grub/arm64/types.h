@@ -23,7 +23,11 @@
 #define GRUB_TARGET_SIZEOF_VOID_P	8
 
 /* The size of long.  */
+#if defined(_MSC_VER)
+#define GRUB_TARGET_SIZEOF_LONG		4
+#else
 #define GRUB_TARGET_SIZEOF_LONG		8
+#endif
 
 /* currently only support little-endian.  */
 #undef GRUB_TARGET_WORDS_BIGENDIAN

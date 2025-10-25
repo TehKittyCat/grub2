@@ -153,6 +153,7 @@ struct grub_ufs_sblock
   grub_uint32_t magic;
 };
 
+PRAGMA_BEGIN_PACKED
 #ifdef MODE_UFS2
 /* UFS inode.  */
 struct grub_ufs_inode
@@ -236,6 +237,7 @@ struct grub_ufs_dirent
     };
   };
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* Information about a "mounted" ufs filesystem.  */
 struct grub_ufs_data

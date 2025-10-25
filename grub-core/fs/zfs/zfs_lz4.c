@@ -74,6 +74,7 @@ static int LZ4_uncompress_unknownOutputSize(const char *source, char *dest,
 #define	S32	grub_int32_t
 #define	U64	grub_uint64_t
 
+PRAGMA_BEGIN_PACKED
 typedef struct _U16_S {
 	U16 v;
 } GRUB_PACKED U16_S;
@@ -83,6 +84,7 @@ typedef struct _U32_S {
 typedef struct _U64_S {
 	U64 v;
 } GRUB_PACKED U64_S;
+PRAGMA_END_PACKED
 
 #define	A64(x)	(((U64_S *)(x))->v)
 #define	A32(x)	(((U32_S *)(x))->v)

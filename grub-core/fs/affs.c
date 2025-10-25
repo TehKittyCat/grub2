@@ -31,6 +31,7 @@
 GRUB_MOD_LICENSE ("GPLv3+");
 
 /* The affs bootblock.  */
+PRAGMA_BEGIN_PACKED
 struct grub_affs_bblock
 {
   grub_uint8_t type[3];
@@ -78,6 +79,7 @@ struct grub_affs_file
   grub_uint32_t extension;
   grub_uint32_t type;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* The location of `struct grub_affs_file' relative to the end of a
    file header block.  */

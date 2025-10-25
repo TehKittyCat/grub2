@@ -37,7 +37,7 @@ union printf_arg
       INT, LONG, LONGLONG,
       UNSIGNED_INT = 3, UNSIGNED_LONG, UNSIGNED_LONGLONG,
       STRING,
-      GUID
+      UUID
     } type;
   long long ll;
 };
@@ -162,7 +162,7 @@ grub_puts_ (const char *s)
   return grub_puts (_(s));
 }
 
-#if defined (__APPLE__) && ! defined (GRUB_UTIL)
+#if ( defined (__APPLE__) || defined (_MSC_VER) ) && ! defined (GRUB_UTIL)
 int
 grub_err_printf (const char *fmt, ...)
 {
@@ -177,7 +177,7 @@ grub_err_printf (const char *fmt, ...)
 }
 #endif
 
-#if ! defined (__APPLE__) && ! defined (GRUB_UTIL)
+#if ! defined (__APPLE__) && ! defined (_MSC_VER) && ! defined (GRUB_UTIL)
 int grub_err_printf (const char *fmt, ...)
 __attribute__ ((alias("grub_printf")));
 #endif
@@ -903,7 +903,7 @@ parse_printf_arg_fmt (const char *fmt0, struct printf_args *args,
 	  else
 	    args->ptr[curn].type = UNSIGNED_INT;
 	  if (*(fmt) == 'G') {
-	    args->ptr[curn].type = GUID;
+	    args->ptr[curn].type = UUID;
 	    ++fmt;
 	  }
 	  break;
@@ -947,7 +947,7 @@ parse_printf_args (const char *fmt0, struct printf_args *args, va_list args_in)
 	args->ptr[n].ll = va_arg (args_in, long long);
 	break;
       case STRING:
-      case GUID:
+      case UUID:
 	if (sizeof (void *) == sizeof (long long))
 	  args->ptr[n].ll = va_arg (args_in, long long);
 	else
@@ -1154,7 +1154,7 @@ grub_vsnprintf_real (char *str, grub_size_t max_len, const char *fmt0,
 	  {
 	    grub_size_t len = 0;
 	    grub_size_t fill;
-	    const char *p = ((char *) (grub_addr_t) curarg) ? : "(null)";
+	    const char *p = (curarg != 0) ? ((char *) (grub_addr_t) curarg) : "(null)";
 	    grub_size_t i;
 
 	    while (len < format2 && p[len])

@@ -45,6 +45,7 @@ enum grub_hfsplus_btnode_type
   };
 
 /* The header of a HFS+ B+ Tree.  */
+PRAGMA_BEGIN_PACKED
 struct grub_hfsplus_btheader
 {
   grub_uint16_t depth;
@@ -77,6 +78,7 @@ struct grub_hfsplus_catfile
   struct grub_hfsplus_forkdata data;
   struct grub_hfsplus_forkdata resource;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 /* Filetype information as used in inodes.  */
 #define GRUB_HFSPLUS_FILEMODE_MASK	0170000

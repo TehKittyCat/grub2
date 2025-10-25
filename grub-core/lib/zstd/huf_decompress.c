@@ -35,7 +35,7 @@
 /* **************************************************************
 *  Dependencies
 ****************************************************************/
-#include <string.h>     /* memcpy, memset */
+#include "mem.h"
 #include "compiler.h"
 #include "bitstream.h"  /* BIT_* */
 #include "fse.h"        /* to compress headers */

@@ -21,6 +21,16 @@ extern "C" {
 #include <stddef.h>     /* size_t, ptrdiff_t */
 #include <string.h>     /* memcpy */
 
+#ifdef GRUB
+#include <grub/mm.h>
+#include <grub/misc.h>
+#define memset grub_memset
+#define memcpy grub_memcpy
+#define memmove grub_memmove
+#define malloc grub_malloc
+#define calloc grub_calloc
+#define free grub_free
+#endif
 
 /*-****************************************
 *  Compiler specifics
@@ -196,7 +206,7 @@ MEM_STATIC void MEM_write64(void* memPtr, U64 value)
 
 MEM_STATIC U32 MEM_swap32(U32 in)
 {
-#if defined(_MSC_VER)     /* Visual Studio */
+#if defined(_MSC_VER) && !defined(GRUB)     /* Visual Studio */
     return _byteswap_ulong(in);
 #elif defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 403)
     return __builtin_bswap32(in);
@@ -210,7 +220,7 @@ MEM_STATIC U32 MEM_swap32(U32 in)
 
 MEM_STATIC U64 MEM_swap64(U64 in)
 {
-#if defined(_MSC_VER)     /* Visual Studio */
+#if defined(_MSC_VER) && !defined(GRUB)     /* Visual Studio */
     return _byteswap_uint64(in);
 #elif defined (__GNUC__) && (__GNUC__ * 100 + __GNUC_MINOR__ >= 403)
     return __builtin_bswap64(in);

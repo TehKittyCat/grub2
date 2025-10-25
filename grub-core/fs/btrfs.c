@@ -63,6 +63,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 typedef grub_uint8_t grub_btrfs_checksum_t[0x20];
 typedef grub_uint16_t grub_btrfs_uuid_t[8];
 
+PRAGMA_BEGIN_PACKED
 struct grub_btrfs_device
 {
   grub_uint64_t device_id;
@@ -97,6 +98,7 @@ struct btrfs_header
   grub_uint32_t nitems;
   grub_uint8_t level;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_btrfs_device_desc
 {
@@ -111,8 +113,8 @@ struct grub_btrfs_data
   grub_uint64_t inode;
 
   struct grub_btrfs_device_desc *devices_attached;
-  unsigned n_devices_attached;
-  unsigned n_devices_allocated;
+  grub_size_t n_devices_attached;
+  grub_size_t n_devices_allocated;
 
   /* Cached extent data.  */
   grub_uint64_t extstart;
@@ -123,6 +125,7 @@ struct grub_btrfs_data
   struct grub_btrfs_extent_data *extent;
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_btrfs_chunk_item
 {
   grub_uint64_t size;
@@ -175,22 +178,24 @@ struct grub_btrfs_dir_item
 #define GRUB_BTRFS_DIR_ITEM_TYPE_DIRECTORY 2
 #define GRUB_BTRFS_DIR_ITEM_TYPE_SYMLINK 7
   grub_uint8_t type;
-  char name[0];
+  char name[1];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_btrfs_leaf_descriptor
 {
-  unsigned depth;
-  unsigned allocated;
+  grub_size_t depth;
+  grub_size_t allocated;
   struct
   {
     grub_disk_addr_t addr;
-    unsigned iter;
-    unsigned maxiter;
+	grub_size_t iter;
+	grub_size_t maxiter;
     int leaf;
   } *data;
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_btrfs_time
 {
   grub_int64_t sec;
@@ -225,6 +230,7 @@ struct grub_btrfs_extent_data
     };
   };
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 #define GRUB_BTRFS_EXTENT_INLINE 0
 #define GRUB_BTRFS_EXTENT_REGULAR 1
@@ -697,7 +703,7 @@ struct raid56_buffer {
   int  data_is_valid;
 };
 
-static void
+static grub_err_t
 rebuild_raid5 (char *dest, struct raid56_buffer *buffers,
 	       grub_uint64_t nstripes, grub_uint64_t csize)
 {
@@ -709,7 +715,7 @@ rebuild_raid5 (char *dest, struct raid56_buffer *buffers,
   if (i == nstripes)
     {
       grub_dprintf ("btrfs", "called rebuild_raid5(), but all disks are OK\n");
-      return;
+      return GRUB_ERR_NONE;
     }
 
   grub_dprintf ("btrfs", "rebuilding RAID 5 stripe #%" PRIuGRUB_UINT64_T "\n", i);
@@ -725,8 +731,10 @@ rebuild_raid5 (char *dest, struct raid56_buffer *buffers,
       } else
 	grub_crypto_xor (dest, dest, buffers[i].buf, csize);
     }
+  return GRUB_ERR_NONE;
 }
 
+#ifndef NO_RAID6_RECOVERY
 static grub_err_t
 raid6_recover_read_buffer (void *data, int disk_nr,
 			   grub_uint64_t addr __attribute__ ((unused)),
@@ -741,15 +749,20 @@ raid6_recover_read_buffer (void *data, int disk_nr,
 
     return grub_errno = GRUB_ERR_NONE;
 }
+#endif
 
-static void
+static grub_err_t
 rebuild_raid6 (struct raid56_buffer *buffers, grub_uint64_t nstripes,
                grub_uint64_t csize, grub_uint64_t parities_pos, void *dest,
                grub_uint64_t stripen)
 
 {
-  grub_raid6_recover_gen (buffers, nstripes, stripen, parities_pos,
-                          dest, 0, csize, 0, raid6_recover_read_buffer);
+#ifdef NO_RAID6_RECOVERY
+  return GRUB_ERR_NOT_IMPLEMENTED_YET;
+#else
+  return grub_raid6_recover_gen (buffers, nstripes, stripen, parities_pos,
+                                 dest, 0, csize, 0, raid6_recover_read_buffer);
+#endif
 }
 
 static grub_err_t
@@ -843,11 +856,10 @@ raid56_read_retry (struct grub_btrfs_data *data,
 
   /* We have enough disks. So, rebuild the data. */
   if (chunk_type & GRUB_BTRFS_CHUNK_TYPE_RAID5)
-    rebuild_raid5 (buf, buffers, nstripes, csize);
+    ret = rebuild_raid5 (buf, buffers, nstripes, csize);
   else
-    rebuild_raid6 (buffers, nstripes, csize, parities_pos, buf, stripen);
+    ret = rebuild_raid6 (buffers, nstripes, csize, parities_pos, buf, stripen);
 
-  ret = GRUB_ERR_NONE;
  cleanup:
   if (buffers)
     for (i = 0; i < nstripes; i++)
@@ -965,8 +977,8 @@ grub_btrfs_read_logical (struct grub_btrfs_data *data, grub_disk_addr_t addr,
 			       "couldn't find the chunk descriptor");
 	  }
 
-	nstripes = grub_le_to_cpu16 (chunk->nstripes) ? : 1;
-	chunk_stripe_length = grub_le_to_cpu64 (chunk->stripe_length) ? : 512;
+	nstripes = grub_le_to_cpu16 (chunk->nstripes) ? grub_le_to_cpu16(chunk->nstripes) : 1;
+	chunk_stripe_length = grub_le_to_cpu64 (chunk->stripe_length) ? grub_le_to_cpu64(chunk->stripe_length) : 512;
 	grub_dprintf ("btrfs", "chunk 0x%" PRIxGRUB_UINT64_T
 		      "+0x%" PRIxGRUB_UINT64_T
 		      " (%d stripes (%d substripes) of %"
@@ -1052,13 +1064,13 @@ grub_btrfs_read_logical (struct grub_btrfs_data *data, grub_disk_addr_t addr,
 	      grub_uint64_t middle, high;
 	      grub_uint64_t low;
 	      grub_uint16_t nsubstripes;
-	      nsubstripes = grub_le_to_cpu16 (chunk->nsubstripes) ? : 1;
+	      nsubstripes = grub_le_to_cpu16 (chunk->nsubstripes) ? grub_le_to_cpu16(chunk->nsubstripes)  : 1;
 	      middle = grub_divmod64 (off,
 				      chunk_stripe_length,
 				      &low);
 
 	      high = grub_divmod64 (middle,
-				    nstripes / nsubstripes ? : 1,
+				    nstripes / nsubstripes ? nstripes / nsubstripes : 1,
 				    &stripen);
 	      stripen *= nsubstripes;
 	      redundancy = nsubstripes;
@@ -1335,7 +1347,7 @@ static void *grub_zstd_malloc (void *state __attribute__((unused)), size_t size)
 
 static void grub_zstd_free (void *state __attribute__((unused)), void *address)
 {
-  return grub_free (address);
+  grub_free (address);
 }
 
 static ZSTD_customMem grub_zstd_allocator (void)

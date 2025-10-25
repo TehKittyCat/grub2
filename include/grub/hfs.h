@@ -24,6 +24,7 @@
 #define GRUB_HFS_MAGIC		0x4244
 
 /* A single extent.  A file consists of one or more extents.  */
+PRAGMA_BEGIN_PACKED
 struct grub_hfs_extent
 {
   /* The first physical block.  */
@@ -68,5 +69,6 @@ struct grub_hfs_sblock
   grub_uint32_t catalog_size;
   grub_hfs_datarecord_t catalog_recs;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 #endif /* ! GRUB_HFS_HEADER */

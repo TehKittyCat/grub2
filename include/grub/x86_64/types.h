@@ -27,7 +27,7 @@
 #endif
 
 /* The size of long.  */
-#if defined(__MINGW32__) || defined(__ILP32__)
+#if defined(__MINGW32__) || defined(__ILP32__) || defined(_MSC_VER)
 #define GRUB_TARGET_SIZEOF_LONG		4
 #else
 #define GRUB_TARGET_SIZEOF_LONG		8

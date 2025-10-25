@@ -47,6 +47,30 @@
   __failed;						\
 })
 
+#elif defined(_MSC_VER)
+
+#include <intsafe.h>
+#include <stdbool.h>
+#include <intrin.h>
+
+#define grub_add(a, b, res)	UIntPtrAdd(a, b, res)
+#define grub_sub(a, b, res)	UIntPtrSub(a, b, res)
+#define grub_mul(a, b, res)	UIntPtrMult(a, b, res)
+
+#define grub_cast(a, res)	grub_add ((a), 0, (res))
+
+// Only used by EROFS for now...
+static __inline bool ALIGN_UP_OVF(uintptr_t v, uintptr_t align, uintptr_t* res)
+{
+  bool __failed;
+  uintptr_t __a = ((uintptr_t)(align) - 1);
+
+  __failed = FAILED(grub_add (v, __a, res));
+  if (__failed == false)
+    *(res) &= ~__a;
+  return __failed;
+}
+
 #else
 #error gcc 5.1 or newer or clang 8.0 or newer is required
 #endif

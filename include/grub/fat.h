@@ -21,6 +21,7 @@
 
 #include <grub/types.h>
 
+PRAGMA_BEGIN_PACKED
 struct grub_fat_bpb
 {
   grub_uint8_t jmp_boot[3];
@@ -66,6 +67,7 @@ struct grub_fat_bpb
     } GRUB_PACKED fat32;
   } GRUB_PACKED version_specific;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 #ifdef GRUB_UTIL
 #include <grub/disk.h>

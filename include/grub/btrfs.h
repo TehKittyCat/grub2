@@ -45,13 +45,14 @@ struct grub_btrfs_root_item
   grub_uint64_t inode;
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_btrfs_key
 {
   grub_uint64_t object_id;
   grub_uint8_t type;
   grub_uint64_t offset;
 } GRUB_PACKED;
-
+PRAGMA_END_PACKED
 
 struct grub_btrfs_root_backref
 {

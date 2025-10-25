@@ -73,7 +73,7 @@ struct grub_archelp_data
 static grub_err_t
 grub_cpio_find_file (struct grub_archelp_data *data, char **name,
 		     grub_int32_t *mtime,
-		     grub_uint32_t *mode)
+		     grub_archelp_mode_t *mode)
 {
   struct head hd;
   int reread = 0, have_longname = 0, have_longlink = 0;

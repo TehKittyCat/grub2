@@ -122,6 +122,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 	 XFS_SB_FEAT_INCOMPAT_PARENT | \
 	 XFS_SB_FEAT_INCOMPAT_METADIR)
 
+PRAGMA_BEGIN_PACKED
 struct grub_xfs_sblock
 {
   grub_uint8_t magic[4];
@@ -254,6 +255,7 @@ struct grub_xfs_dirblock_tail
   grub_uint32_t leaf_count;
   grub_uint32_t leaf_stale;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_fshelp_node
 {

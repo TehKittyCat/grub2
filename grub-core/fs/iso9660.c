@@ -53,6 +53,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 #define GRUB_ISO9660_MAX_CE_HOPS	100000
 
 /* The head of a volume descriptor.  */
+PRAGMA_BEGIN_PACKED
 struct grub_iso9660_voldesc
 {
   grub_uint8_t type;
@@ -133,8 +134,18 @@ struct grub_iso9660_susp_entry
 {
   grub_uint8_t sig[2];
   grub_uint8_t len;
-  grub_uint8_t version;
-  grub_uint8_t data[0];
+/*! MSVC compilers cannot handle a zero sized array in the middle
+    of a struct, and grub_iso9660_susp_entry is reused within
+    grub_iso9660_susp_ce. Therefore, instead of defining:
+        grub_uint8_t version;
+        grub_uint8_t data[];
+    we leverage the fact that these attributes are the same size
+    and use an union. The only gotcha is that the actual
+    payload of u.data[] starts at 1, not 0. */
+  union {
+    grub_uint8_t  version;
+    grub_uint8_t  data[1];
+  } u;
 } GRUB_PACKED;
 
 /* The CE entry.  This is used to describe the next block where data
@@ -149,6 +160,7 @@ struct grub_iso9660_susp_ce
   grub_uint32_t len;
   grub_uint32_t len_be;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_iso9660_data
 {
@@ -473,7 +485,7 @@ set_rockridge (struct grub_iso9660_data *data)
        * The 2nd data byte stored how many bytes are skipped every time
        * to get to the SUA (System Usage Area).
        */
-      data->susp_skip = entry->data[2];
+      data->susp_skip = entry->u.data[1 + 2];
       entry = (struct grub_iso9660_susp_entry *) ((char *) entry + entry->len);
 
       /* Iterate over the entries in the SUA area to detect
@@ -627,14 +639,14 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
       /* The flags are stored at the data position 0, here the
 	 filename type is stored.  */
       /* FIXME: Fix this slightly improper cast.  */
-      if (entry->data[0] & GRUB_ISO9660_RR_DOT)
+      if (entry->u.data[1 + 0] & GRUB_ISO9660_RR_DOT)
 	{
 	  if (ctx->filename_alloc)
 	    grub_free (ctx->filename);
 	  ctx->filename_alloc = 0;
 	  ctx->filename = (char *) ".";
 	}
-      else if (entry->data[0] & GRUB_ISO9660_RR_DOTDOT)
+      else if (entry->u.data[1 + 0] & GRUB_ISO9660_RR_DOTDOT)
 	{
 	  if (ctx->filename_alloc)
 	    grub_free (ctx->filename);
@@ -670,7 +682,7 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
 	      return grub_errno;
 	    }
 	  ctx->filename_alloc = 1;
-	  grub_memcpy (ctx->filename + off, (char *) &entry->data[1], csize);
+	  grub_memcpy (ctx->filename + off, (char *) &entry->u.data[1 + 1], csize);
 	  ctx->filename[off + csize] = '\0';
 	}
     }
@@ -679,7 +691,7 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
     {
       /* At position 0 of the PX record the st_mode information is
 	 stored (little-endian).  */
-      grub_uint32_t mode = ((entry->data[0] + (entry->data[1] << 8))
+      grub_uint32_t mode = ((entry->u.data[1 + 0] + (entry->u.data[1 + 1] << 8))
 			    & GRUB_ISO9660_FSTYPE_MASK);
 
       switch (mode)
@@ -713,12 +725,12 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
 	   * "Component Flags"; entry->data[pos + 1] is the length
 	   * of the component.
 	   */
-          csize = entry->data[pos + 1] + 2;
+          csize = entry->u.data[1 + pos + 1] + 2;
           if (GRUB_ISO9660_SUSP_HEADER_SZ + 1 + csize > entry->len)
             break;
 
 	  /* The current position is the `Component Flag'.  */
-	  switch (entry->data[pos] & 30)
+	  switch (entry->u.data[1 + pos] & 30)
 	    {
 	    case 0:
 	      {
@@ -732,9 +744,9 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
 		      return grub_errno;
 		  }
 
-		add_part (ctx, (char *) &entry->data[pos + 2],
-			  entry->data[pos + 1]);
-		ctx->was_continue = (entry->data[pos] & 1);
+		add_part (ctx, (char *) &entry->u.data[1 + pos + 2],
+			  entry->u.data[1 + pos + 1]);
+		ctx->was_continue = (entry->u.data[1 + pos] & 1);
 		break;
 	      }
 
@@ -757,7 +769,7 @@ susp_iterate_dir (struct grub_iso9660_susp_entry *entry,
 
 	  /* In pos + 1 the length of the `Component Record' is
 	     stored.  */
-	  pos += entry->data[pos + 1] + 2;
+	  pos += entry->u.data[1 + pos + 1] + 2;
 	}
 
       /* Check if `grub_realloc' failed.  */

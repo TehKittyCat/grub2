@@ -67,12 +67,24 @@ static const U32 repStartValue[ZSTD_REP_NUM] = { 1, 4, 8 };
 #define MB *(1 <<20)
 #define GB *(1U<<30)
 
+#ifndef BIT7
 #define BIT7 128
+#endif
+#ifndef BIT6
 #define BIT6  64
+#endif
+#ifndef BIT5
 #define BIT5  32
+#endif
+#ifndef BIT4
 #define BIT4  16
+#endif
+#ifndef BIT1
 #define BIT1   2
+#endif
+#ifndef BIT0
 #define BIT0   1
+#endif
 
 #define ZSTD_WINDOWLOG_ABSOLUTEMIN 10
 #define ZSTD_WINDOWLOG_DEFAULTMAX 27 /* Default maximum allowed window log */
@@ -215,7 +227,7 @@ MEM_STATIC U32 ZSTD_highbit32(U32 val)   /* compress, dictBuilder, decodeCorpus 
         unsigned long r=0;
         _BitScanReverse(&r, val);
         return (unsigned)r;
-#   elif defined(__GNUC__) && (__GNUC__ >= 3)   /* GCC Intrinsic */
+#   elif defined(__GNUC__) && (__GNUC__ >= 3) && !defined(__riscv)  /* GCC Intrinsic */
         return 31 - __builtin_clz(val);
 #   else   /* Software version */
         static const U32 DeBruijnClz[32] = { 0, 9, 1, 10, 13, 21, 2, 29, 11, 14, 16, 18, 22, 25, 3, 30, 8, 12, 20, 28, 15, 17, 24, 7, 19, 27, 23, 6, 26, 5, 4, 31 };

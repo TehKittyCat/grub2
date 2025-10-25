@@ -32,6 +32,7 @@
 GRUB_MOD_LICENSE ("GPLv3+");
 
 /* The common header for a block.  */
+PRAGMA_BEGIN_PACKED
 struct grub_sfs_bheader
 {
   grub_uint8_t magic[4];
@@ -123,8 +124,9 @@ struct grub_sfs_btree
      supported.  */
   struct grub_sfs_btree_node node[1];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
-
+
 
 struct cache_entry
 {

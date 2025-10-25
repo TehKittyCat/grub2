@@ -51,6 +51,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
   unk2 containts one uint64_t
 */
 
+PRAGMA_BEGIN_PACKED
 struct grub_squash_super
 {
   grub_uint32_t magic;
@@ -89,7 +90,7 @@ struct grub_squash_inode
       grub_uint32_t fragment;
       grub_uint32_t offset;
       grub_uint32_t size;
-      grub_uint32_t block_size[0];
+      grub_uint32_t block_size[1];
     }  GRUB_PACKED file;
     struct {
       grub_uint64_t chunk;
@@ -98,7 +99,7 @@ struct grub_squash_inode
       grub_uint32_t fragment;
       grub_uint32_t offset;
       grub_uint32_t dummy3;
-      grub_uint32_t block_size[0];
+      grub_uint32_t block_size[1];
     }  GRUB_PACKED long_file;
     struct {
       grub_uint32_t chunk;
@@ -117,10 +118,11 @@ struct grub_squash_inode
     struct {
       grub_uint32_t dummy;
       grub_uint32_t namelen;
-      char name[0];
+      char name[1];
     } GRUB_PACKED symlink;
   }  GRUB_PACKED;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_squash_cache_inode
 {
@@ -131,6 +133,7 @@ struct grub_squash_cache_inode
   grub_disk_addr_t *cumulated_block_sizes;
 };
 
+PRAGMA_BEGIN_PACKED
 /* Chunk-based.  */
 struct grub_squash_dirent_header
 {
@@ -166,6 +169,7 @@ struct grub_squash_frag_desc
   grub_uint32_t size;
   grub_uint32_t dummy;
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 enum
   {

@@ -13,8 +13,7 @@
 /*-*************************************
 *  Dependencies
 ***************************************/
-#include <stdlib.h>      /* malloc, calloc, free */
-#include <string.h>      /* memset */
+#include "mem.h"
 #include "error_private.h"
 #include "zstd_internal.h"
 

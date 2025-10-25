@@ -23,8 +23,12 @@
 
 #define UCHAR_MAX GRUB_UCHAR_MAX
 #define USHRT_MAX GRUB_USHRT_MAX
+#ifndef UINT_MAX
 #define UINT_MAX GRUB_UINT_MAX
+#endif
+#ifndef ULONG_MAX
 #define ULONG_MAX GRUB_ULONG_MAX
+#endif
 
 /* gnulib also defines this type */
 #ifndef SIZE_MAX
@@ -35,10 +39,18 @@
 #define SCHAR_MAX GRUB_SCHAR_MAX
 #define SHRT_MIN GRUB_SHRT_MIN
 #define SHRT_MAX GRUB_SHRT_MAX
+#ifndef INT_MIN
 #define INT_MIN GRUB_INT_MIN
+#endif
+#ifndef INT_MAX
 #define INT_MAX GRUB_INT_MAX
+#endif
+#ifndef LONG_MIN
 #define LONG_MIN GRUB_LONG_MIN
+#endif
+#ifndef LONG_MAX
 #define LONG_MAX GRUB_LONG_MAX
+#endif
 
 #define CHAR_BIT 8
 #define WORD_BIT 32

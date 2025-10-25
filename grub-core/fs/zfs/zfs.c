@@ -254,8 +254,8 @@ struct grub_zfs_data
   struct subvolume subvol;
 
   struct grub_zfs_device_desc *devices_attached;
-  unsigned n_devices_attached;
-  unsigned n_devices_allocated;
+  grub_size_t n_devices_attached;
+  grub_size_t n_devices_allocated;
   struct grub_zfs_device_desc *device_original;
 
   uberblock_t current_uberblock;
@@ -2806,7 +2806,9 @@ dnode_get (dnode_end_t * mdn, grub_uint64_t objnum, grub_uint8_t type,
   return GRUB_ERR_NONE;
 }
 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif
 
 /*
  * Get the file dnode for a given file name where mdn is the meta dnode

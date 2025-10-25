@@ -27,10 +27,12 @@
 
 #define	ZEC_MAGIC	0x210da7ab10c7a11ULL	/* zio data bloc tail */
 
+PRAGMA_BEGIN_PACKED
 typedef struct zio_eck {
 	grub_uint64_t	zec_magic;	/* for validation, endianness	*/
 	zio_cksum_t	zec_cksum;	/* 256-bit checksum		*/
 } GRUB_PACKED zio_eck_t;
+PRAGMA_END_PACKED
 
 /*
  * Gang block headers are self-checksumming and contain an array

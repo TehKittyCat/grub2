@@ -133,6 +133,7 @@ enum FILE_TYPE
   F2FS_FT_SYMLINK                 = 7
 };
 
+PRAGMA_BEGIN_PACKED
 struct grub_f2fs_superblock
 {
   grub_uint32_t                   magic;
@@ -283,6 +284,7 @@ struct grub_f2fs_node
   };
   grub_uint8_t                    dummy[40];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 struct grub_fshelp_node
 {

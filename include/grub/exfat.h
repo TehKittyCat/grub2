@@ -21,6 +21,7 @@
 
 #include <grub/types.h>
 
+PRAGMA_BEGIN_PACKED
 struct grub_exfat_bpb
 {
   grub_uint8_t jmp_boot[3];
@@ -42,6 +43,7 @@ struct grub_exfat_bpb
   grub_uint8_t num_ph_drive;
   grub_uint8_t reserved[8];
 } GRUB_PACKED;
+PRAGMA_END_PACKED
 
 #ifdef GRUB_UTIL
 #include <grub/disk.h>
