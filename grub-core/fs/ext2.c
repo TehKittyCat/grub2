@@ -106,6 +106,7 @@ GRUB_MOD_LICENSE ("GPLv3+");
 #define EXT4_FEATURE_INCOMPAT_CSUM_SEED		0x2000
 #define EXT4_FEATURE_INCOMPAT_LARGEDIR		0x4000 /* >2GB or 3 level htree */
 #define EXT4_FEATURE_INCOMPAT_ENCRYPT          0x10000
+#define EXT4_FEATURE_INCOMPAT_CASEFOLD		0x20000
 
 /* The set of back-incompatible features this driver DOES support. Add (OR)
  * flags here as the related features are implemented into the driver.  */
@@ -140,7 +141,8 @@ GRUB_MOD_LICENSE ("GPLv3+");
 #define EXT2_DRIVER_IGNORED_INCOMPAT ( EXT3_FEATURE_INCOMPAT_RECOVER \
 				     | EXT4_FEATURE_INCOMPAT_MMP \
 				     | EXT4_FEATURE_INCOMPAT_CSUM_SEED \
-				     | EXT4_FEATURE_INCOMPAT_LARGEDIR)
+				     | EXT4_FEATURE_INCOMPAT_LARGEDIR \
+				     | EXT4_FEATURE_INCOMPAT_CASEFOLD)
 
 #define EXT3_JOURNAL_MAGIC_NUMBER	0xc03b3998U
 
